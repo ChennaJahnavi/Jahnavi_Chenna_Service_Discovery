@@ -70,18 +70,3 @@ Run it a few times and watch `chosen_instance_id` flip between `echo-1` and `ech
 ### Client (`client:9000`)
 
 - `GET /call` – discovers instances and calls one randomly
-
-## Demo video checklist (what to record)
-
-- Start: `docker compose up --build`
-- Show registry discovery: `GET /discover/echo-service` returns **2 instances**
-- Call client repeatedly: `GET /call` shows **random chosen instance**
-- (Optional) stop one instance (e.g. `docker stop service2`) and show the registry count drops after TTL and the client keeps working
-
-## Optional: Service Mesh discovery (Istio/Linkerd)
-
-This repo uses an application-level registry for discovery. If you want to add a mesh-based demo:
-
-- Run the app in Kubernetes
-- Inject sidecars (Istio/Linkerd)
-- Use a Kubernetes `Service` (DNS) for discovery and mesh features for routing/observability/security
