@@ -20,7 +20,7 @@ This document contains screenshots demonstrating the end-to-end testing of the s
 
 ![Docker compose logs with register + heartbeat](assets/Screenshot_2026-03-18_at_9.08.13_PM-f7557d35-f3f7-436c-ad28-c1a56d0278b4.png)
 
-### Test client-based service discovery
+### Test client-based service discovery and Verify random load balancing
 
 ![Unknown service returns 503](assets/Screenshot_2026-03-18_at_9.13.57_PM-53be8a67-59ae-46b0-8bcf-6a723cfd7b9e.png)
 
