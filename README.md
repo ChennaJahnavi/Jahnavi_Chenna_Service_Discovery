@@ -47,7 +47,7 @@ docker compose up --build
 curl -s http://localhost:8000/health
 ```
 
-✅ Expected:
+Expected:
 
 ```json
 {"status":"ok"}
@@ -60,7 +60,7 @@ curl -s http://localhost:5001/health
 curl -s http://localhost:5002/health
 ```
 
-✅ Expected:
+Expected:
 
 - One returns something like:
 
@@ -80,12 +80,12 @@ curl -s http://localhost:5002/health
 curl -s http://localhost:8000/discover/echo-service
 ```
 
-✅ Expected:
+Expected:
 
 - `"count": 2`
 - both instances listed (including `echo-1` and `echo-2`)
 
-👉 This proves services successfully registered with the registry.
+This proves services successfully registered with the registry.
 
 ### Step 4: Test direct service responses
 
@@ -94,7 +94,7 @@ curl -s http://localhost:5001/hello
 curl -s http://localhost:5002/hello
 ```
 
-✅ Expected:
+Expected:
 
 - Both return valid JSON
 - Each shows a different `instance_id` (`echo-1` vs `echo-2`)
@@ -128,12 +128,12 @@ for ($i=1; $i -le 10; $i++) {
 
 ### Step 6: Verify random load balancing
 
-✅ Expected:
+Expected:
 
 - Some responses show `"chosen_instance_id": "echo-1"`
 - Some show `"chosen_instance_id": "echo-2"`
 
-👉 This proves the client discovers the service and randomly selects an instance.
+This proves the client discovers the service and randomly selects an instance.
 
 ### Step 7: Failure / resilience test (very important)
 
@@ -151,7 +151,7 @@ Then check:
 curl -s http://localhost:8000/discover/echo-service
 ```
 
-✅ Expected:
+Expected:
 
 - `"count": 1`
 - only one instance remains
@@ -162,12 +162,12 @@ Now call the client again:
 curl -s "http://localhost:9000/call?service=echo-service&path=/hello"
 ```
 
-✅ Expected:
+Expected:
 
 - still works
 - always returns the remaining instance (typically `echo-1`)
 
-👉 This proves the registry removes dead instances and the system still works.
+This proves the registry removes dead instances and the system still works.
 
 ### Step 8: Negative test (optional but good)
 
@@ -177,17 +177,17 @@ Unknown service:
 curl -i "http://localhost:9000/call?service=unknown&path=/hello"
 ```
 
-✅ Expected:
+Expected:
 
 - HTTP `503` response
 
-🎯 What you just proved (tie to assignment)
+What you just proved (tie to assignment)
 
-- ✅ 2 service instances running
-- ✅ services register with registry
-- ✅ client discovers service dynamically
-- ✅ client calls a random instance
-- ✅ system handles failure correctly
+- 2 service instances running
+- services register with registry
+- client discovers service dynamically
+- client calls a random instance
+- system handles failure correctly
 
 ### Verify registry has 2 instances
 
