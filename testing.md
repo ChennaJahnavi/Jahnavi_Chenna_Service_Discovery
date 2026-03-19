@@ -8,7 +8,7 @@ This document contains screenshots demonstrating the end-to-end testing of the s
 
 ![Registry and services health + discover output](assets/Screenshot_2026-03-18_at_9.13.04_PM-dfc08d19-bf71-42c5-ba5a-d2515db73aeb.png)
 
-### Client-based service discovery + random load balancing
+### Negative test (unknown service returns 503)
 
 ![Client /call output showing different chosen instances](assets/Screenshot_2026-03-18_at_9.20.32_PM-ec043412-4f3a-475b-9712-ae8f15d7e593.png)
 
@@ -20,7 +20,7 @@ This document contains screenshots demonstrating the end-to-end testing of the s
 
 ![Docker compose logs with register + heartbeat](assets/Screenshot_2026-03-18_at_9.08.13_PM-f7557d35-f3f7-436c-ad28-c1a56d0278b4.png)
 
-### Negative test (unknown service returns 503)
+### Test client-based service discovery
 
 ![Unknown service returns 503](assets/Screenshot_2026-03-18_at_9.13.57_PM-53be8a67-59ae-46b0-8bcf-6a723cfd7b9e.png)
 
