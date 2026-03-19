@@ -1,159 +1,26 @@
 # Testing (End-to-End)
 
-This document verifies:
+This document contains screenshots demonstrating the end-to-end testing of the service registry, two service instances, and the client-based discovery + load balancing.
 
-- ✅ registry is running
-- ✅ two service instances are running and registered
-- ✅ client discovers service dynamically
-- ✅ client randomly load-balances across instances
-- ✅ system removes dead instances (TTL) and remains available
-- ✅ unknown services return an error
+## Screenshots
 
-## Prerequisite
+### Health checks and discovery (registry + instances)
 
-Start everything:
+![Registry and services health + discover output](assets/Screenshot_2026-03-18_at_9.13.04_PM-dfc08d19-bf71-42c5-ba5a-d2515db73aeb.png)
 
-```bash
-docker compose up --build
-```
+### Client-based service discovery + random load balancing
 
-## Step 1: Verify registry is running
+![Client /call output showing different chosen instances](assets/Screenshot_2026-03-18_at_9.20.32_PM-ec043412-4f3a-475b-9712-ae8f15d7e593.png)
 
-```bash
-curl -s http://localhost:8000/health
-```
+### Failure / resilience test (stop one instance, TTL expiry)
 
-✅ Expected:
+![Stopping service2 and registry count drops](assets/Screenshot_2026-03-18_at_9.18.20_PM-3eb06d05-8a47-49c5-b21d-bde011a09204.png)
 
-```json
-{"status":"ok"}
-```
+### Registry heartbeats / runtime logs
 
-## Step 2: Verify both service instances are running
+![Docker compose logs with register + heartbeat](assets/Screenshot_2026-03-18_at_9.08.13_PM-f7557d35-f3f7-436c-ad28-c1a56d0278b4.png)
 
-```bash
-curl -s http://localhost:5001/health
-curl -s http://localhost:5002/health
-```
+### Negative test (unknown service returns 503)
 
-✅ Expected:
-
-- One returns something like:
-
-```json
-{"status":"ok","service":"echo-service","instance_id":"echo-1"}
-```
-
-- The other returns something like:
-
-```json
-{"status":"ok","service":"echo-service","instance_id":"echo-2"}
-```
-
-## Step 3: Verify services registered with registry
-
-```bash
-curl -s http://localhost:8000/discover/echo-service
-```
-
-✅ Expected:
-
-- `"count": 2`
-- both instances listed (including `echo-1` and `echo-2`)
-
-👉 This proves services successfully registered with the registry.
-
-## Step 4: Test direct service responses
-
-```bash
-curl -s http://localhost:5001/hello
-curl -s http://localhost:5002/hello
-```
-
-✅ Expected:
-
-- Both return valid JSON
-- Each shows a different `instance_id` (`echo-1` vs `echo-2`)
-
-## Step 5: Test client-based service discovery (IMPORTANT)
-
-Run this multiple times:
-
-```bash
-curl -s "http://localhost:9000/call?service=echo-service&path=/hello"
-```
-
-Now run the loop.
-
-Mac/Linux:
-
-```bash
-for i in {1..10}; do
-  curl -s "http://localhost:9000/call?service=echo-service&path=/hello"
-  echo
-done
-```
-
-Windows PowerShell:
-
-```powershell
-for ($i=1; $i -le 10; $i++) {
-  curl "http://localhost:9000/call?service=echo-service&path=/hello"
-}
-```
-
-## Step 6: Verify random load balancing
-
-✅ Expected:
-
-- Some responses show `"chosen_instance_id": "echo-1"`
-- Some show `"chosen_instance_id": "echo-2"`
-
-👉 This proves the client discovers the service and randomly selects an instance.
-
-## Step 7: Failure / resilience test (very important)
-
-Stop one service:
-
-```bash
-docker stop service2
-```
-
-Wait ~15–20 seconds (TTL expiry; default TTL is 15 seconds).
-
-Then check:
-
-```bash
-curl -s http://localhost:8000/discover/echo-service
-```
-
-✅ Expected:
-
-- `"count": 1`
-- only one instance remains
-
-Now call the client again:
-
-```bash
-curl -s "http://localhost:9000/call?service=echo-service&path=/hello"
-```
-
-✅ Expected:
-
-- still works
-- always returns the remaining instance (typically `echo-1`)
-
-👉 This proves registry removes dead instances and the system still works.
-
-## Step 8: Negative test (optional but good)
-
-Unknown service:
-
-```bash
-curl -i "http://localhost:9000/call?service=unknown&path=/hello"
-```
-
-✅ Expected:
-
-- HTTP `503` response (e.g. `{"detail":"no instances for service 'unknown'"}`)
+![Unknown service returns 503](assets/Screenshot_2026-03-18_at_9.13.57_PM-53be8a67-59ae-46b0-8bcf-6a723cfd7b9e.png)
 
