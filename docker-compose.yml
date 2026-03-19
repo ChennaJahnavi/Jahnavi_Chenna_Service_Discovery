@@ -1,0 +1,48 @@
+services:
+  registry:
+    build: ./registry
+    container_name: registry
+    ports:
+      - "8000:8000"
+
+  service1:
+    build: ./service
+    container_name: service1
+    environment:
+      - SERVICE_NAME=echo-service
+      - INSTANCE_ID=echo-1
+      - REGISTRY_URL=http://registry:8000
+      - PORT=5001
+      - SERVICE_URL=http://service1:5001
+      - TTL_SECONDS=15
+    depends_on:
+      - registry
+    ports:
+      - "5001:5001"
+
+  service2:
+    build: ./service
+    container_name: service2
+    environment:
+      - SERVICE_NAME=echo-service
+      - INSTANCE_ID=echo-2
+      - REGISTRY_URL=http://registry:8000
+      - PORT=5002
+      - SERVICE_URL=http://service2:5002
+      - TTL_SECONDS=15
+    depends_on:
+      - registry
+    ports:
+      - "5002:5002"
+
+  client:
+    build: ./client
+    container_name: client
+    environment:
+      - REGISTRY_URL=http://registry:8000
+    depends_on:
+      - registry
+      - service1
+      - service2
+    ports:
+      - "9000:9000"
